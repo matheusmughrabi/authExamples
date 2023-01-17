@@ -8,6 +8,7 @@ public class ProductController : ControllerBase
     [HttpGet("get")]
     public async Task<ActionResult> Get()
     {
+        var user = User.Identity?.Name;
         return Ok();
     }
 
@@ -15,6 +16,7 @@ public class ProductController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Create()
     {
+        var user = User.Identity?.Name;
         return Ok();
     }
 
@@ -22,6 +24,7 @@ public class ProductController : ControllerBase
     [Authorize(Roles = "Client")]
     public async Task<ActionResult> Buy()
     {
+        var user = User.Identity?.Name;
         return Ok();
     }
 }

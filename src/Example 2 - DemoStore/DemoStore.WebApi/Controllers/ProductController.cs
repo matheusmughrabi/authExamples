@@ -3,6 +3,7 @@ using DemoStore.WebApi.Attributes;
 using DemoStore.WebApi.Models.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DemoStore.WebApi.Controllers
 {
@@ -16,15 +17,17 @@ namespace DemoStore.WebApi.Controllers
         }
 
         [HttpGet("get")]
-        [Authorize()]
+        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Get()
         {
             return Ok(_productRepository.GetProducts());
         }
 
         [HttpDelete("delete/{id}")]
-        [Authorize(Policy = Policies.BusinessHours, Roles = Roles.Admin)]
+        [Authorize(Policy = Policies.BusinessHours)]
         [ClaimAuthorize(Claims.Product.Type, Claims.Product.Delete)]
+        [ClaimAuthorize(ClaimTypes.Role, "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             _productRepository.DeleteProductById(id);

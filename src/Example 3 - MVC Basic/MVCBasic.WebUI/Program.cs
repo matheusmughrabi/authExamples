@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using MVCBasic.WebUI.ServicesConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,7 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.RegisterCookies();
 builder.Services.RegisterDateOfBirthPolicy();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(config =>
+{
+    var defaultAuthBuilder = new AuthorizationPolicyBuilder();
+    var defaultAuthPolicy = defaultAuthBuilder
+        .RequireAuthenticatedUser()
+        .Build();
+
+    // The defaultAuthPolicy will be automatically used in every action unless it has [AllowAnonimous] 
+    //config.Filters.Add(new AuthorizeFilter(defaultAuthPolicy));
+});
 
 var app = builder.Build();
 

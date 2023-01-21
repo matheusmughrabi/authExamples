@@ -1,1 +1,14 @@
-﻿<h1>Home page</h1>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService _authorizationService
+
+<h1>Home page</h1>
+
+@if((await _authorizationService.AuthorizeAsync(User, "Policy_DateOfBirth")).Succeeded)
+{
+    <h1>You have the date of birth claim</h1>
+}
+else
+{
+    <h1>You don't have the date of birth claim</h1>
+}
+

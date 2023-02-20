@@ -66,6 +66,10 @@ public class HomeController : Controller
         var authResult = await _authorizationService.AuthorizeAsync(User, "Policy_DateOfBirth");
 
         // Do some action if authorized
+        if (authResult.Succeeded)
+        {
+
+        }
 
         return View("Index");
     }

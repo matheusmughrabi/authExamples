@@ -45,5 +45,6 @@ public static class AuthConfiguration
         });
 
         services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
+        services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
     }
 }

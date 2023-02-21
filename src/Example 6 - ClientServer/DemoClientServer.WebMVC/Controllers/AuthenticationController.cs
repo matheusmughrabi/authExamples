@@ -1,9 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DemoClientServer.WebMVC.ApiClients.Authentication;
+using DemoClientServer.WebMVC.Requests;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DemoClientServer.WebMVC.Controllers;
 
 public class AuthenticationController : Controller
 {
+    private readonly IAuthenticationApiClient _authenticationApiClient;
+
+    public AuthenticationController(IAuthenticationApiClient authenticationApiClient)
+    {
+        _authenticationApiClient = authenticationApiClient;
+    }
+
     [HttpGet]
     public async Task<IActionResult> Login()
     {
@@ -13,13 +22,8 @@ public class AuthenticationController : Controller
     [HttpPost]
     public async Task<IActionResult> Login(string username, string password)
     {
-        // Call Web API to get token
-        var httpClient = new HttpClient();
-        var result = await httpClient.GetAsync($"https://localhost:7098/authentication/GetAccessToken?username={username}&password={password}");
-        
-        var token = await result.Content.ReadAsStringAsync();
-        Response.Cookies.Append("X-Access-Token", token, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
-
+        var response = await _authenticationApiClient.GetAccessTokenAsync(new GetAccessTokenRequest() { Username = username, Password = password });    
+        Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
         return View();
     }
 }

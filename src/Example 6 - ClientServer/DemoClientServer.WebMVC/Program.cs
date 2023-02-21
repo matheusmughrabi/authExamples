@@ -1,4 +1,5 @@
 using DemoClientServer.WebApi.Constants;
+using DemoClientServer.WebMVC.ApiClients.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -43,6 +44,11 @@ builder.Services.AddAuthentication(options =>
             return Task.CompletedTask;
         }
     };
+});
+
+builder.Services.AddHttpClient<IAuthenticationApiClient, AuthenticationApiClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration.GetSection("Services")["DemoClientServer.WebApi"]);
 });
 
 var app = builder.Build();

@@ -1,5 +1,6 @@
 ﻿using DemoClientServer.WebApi.Constants;
 using DemoClientServer.WebApi.Repository;
+using DemoClientServer.WebApi.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,10 +18,10 @@ public class AuthenticationController : ControllerBase
         _userRepository = userRepository;
     }
 
-    [HttpGet("Authentication/GetAccessToken")]
-    public async Task<IActionResult> GetAccessToken(string username, string password)
+    [HttpPost("Authentication/GetAccessToken")]
+    public async Task<IActionResult> GetAccessToken([FromBody] GetAccessTokenRequest request)
     {
-        var user = _userRepository.GetUserWithClaims(username, password);
+        var user = _userRepository.GetUserWithClaims(request.Username, request.Password);
 
         var claims = user.UserClaims.Select(claim => new Claim(claim.ClaimType, claim.ClaimValue)).ToList();
         claims.Add(new Claim(ClaimTypes.Name, user.Id.ToString()));
@@ -40,6 +41,8 @@ public class AuthenticationController : ControllerBase
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return Ok(tokenString);
+        var response = new GetAccessTokenResponse() { Token = tokenString };
+
+        return Ok(response);
     }
 }
